@@ -5,8 +5,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Fabio\\": "src/"
+            "Fabio\\": "src"
         },
         "optimize-autoloader": true
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.1",
+        "symfony/var-dumper": "^5.1"
     }
 }
