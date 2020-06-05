@@ -1,4 +1,5 @@
 {
+    "name": "fabio/wp-acf-orm",
     "require": {
         "doctrine/annotations": "^1.10"
     },
