@@ -6,11 +6,12 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Fabio\WordpressAcfOrm\Annotation\AcfField;
 use Fabio\WordpressAcfOrm\Annotation\OptionsPage;
 
-class AnnotationFactory {
+class AnnotationFactory
+{
 
-    static function register($class) {
+    static function register($class)
+    {
         $reader = new AnnotationReader();
-
 
 
         $reflectionClass = new \ReflectionClass($class);
@@ -18,26 +19,26 @@ class AnnotationFactory {
         /** @var OptionsPage $optionsPage */
         $optionsPage = $reader->getClassAnnotation($reflectionClass, OptionsPage::class);
 
-        if($optionsPage) {
+        if ($optionsPage) {
 
-            if(!$optionsPage->post_id) {
+            if (!$optionsPage->post_id) {
                 $optionsPage->post_id = $class;
             }
 
-            $args = (array) $optionsPage;
+            $args = (array)$optionsPage;
 
             $return = acf_add_options_page($args);
 
             $menu_id = $return['menu_slug'];
 
             $group_key = 'group_' . $menu_id;
-            acf_add_local_field_group(array (
+            acf_add_local_field_group(array(
                 'key' => $group_key,
                 'title' => $optionsPage->page_title,
                 'fields' => [],
-                'location' => array (
-                    array (
-                        array (
+                'location' => array(
+                    array(
+                        array(
                             'param' => 'options_page',
                             'operator' => '==',
                             'value' => $menu_id,
@@ -53,7 +54,7 @@ class AnnotationFactory {
             ));
             $props = $reflectionClass->getProperties();
 
-            foreach($props as $prop) {
+            foreach ($props as $prop) {
                 /** @var AcfField $field */
                 $field = $reader->getPropertyAnnotation($prop, AcfField::class);
 
@@ -68,4 +69,33 @@ class AnnotationFactory {
             }
         }
     }
+
+    static function load($class)
+    {
+        $reader = new AnnotationReader();
+
+
+        $reflectionClass = new \ReflectionClass($class);
+
+        /** @var OptionsPage $optionsPage */
+        $optionsPage = $reader->getClassAnnotation($reflectionClass, OptionsPage::class);
+
+        if ($optionsPage) {
+
+            $props = $reflectionClass->getProperties();
+            if (!$optionsPage->post_id) {
+                $optionsPage->post_id = $class;
+            }
+
+            $result = new $class();
+
+            foreach ($props as $prop) {
+                $propName = $prop->getName();
+                $result->$propName = get_field($propName, $optionsPage->post_id);
+            }
+
+            return $result;
+        }
+    }
+
 }
