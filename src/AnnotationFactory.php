@@ -30,14 +30,15 @@ class AnnotationFactory {
 
             $menu_id = $return['menu_slug'];
 
+            $group_key = 'group_' . $menu_id;
             acf_add_local_field_group(array (
-                'key' => 'group_' . $menu_id,
+                'key' => $group_key,
                 'title' => $optionsPage->page_title,
                 'fields' => [],
                 'location' => array (
                     array (
                         array (
-                            'param' => 'options',
+                            'param' => 'options_page',
                             'operator' => '==',
                             'value' => $menu_id,
                         ),
@@ -45,7 +46,7 @@ class AnnotationFactory {
                 ),
                 'menu_order' => 0,
                 'position' => 'normal',
-                'style' => 'default',
+                'style' => 'seamless',
                 'label_placement' => 'top',
                 'instruction_placement' => 'label',
                 'hide_on_screen' => '',
@@ -56,7 +57,14 @@ class AnnotationFactory {
                 /** @var AcfField $field */
                 $field = $reader->getPropertyAnnotation($prop, AcfField::class);
 
-                dump($prop);
+                $acf_vales = (array)$field;
+
+                $acf_vales['key'] = $group_key . $prop->getName();
+                $acf_vales['name'] = $prop->getName();
+                $acf_vales['parent'] = $group_key;
+
+                acf_add_local_field($acf_vales);
+
             }
         }
     }
