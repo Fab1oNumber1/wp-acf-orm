@@ -1,0 +1,11 @@
+{
+    "require": {
+        "doctrine/annotations": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fabio\\": "src/"
+        },
+        "optimize-autoloader": true
+    }
+}
