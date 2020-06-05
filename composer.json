@@ -3,6 +3,7 @@
     "require": {
         "doctrine/annotations": "^1.10"
     },
+    "type": "package",
     "autoload": {
         "psr-4": {
             "Fabio\\": "src"
